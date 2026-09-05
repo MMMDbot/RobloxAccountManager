@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Shell syntax
+        run: |
+          bash -n install.sh update.sh uninstall.sh doctor.sh templo scripts/*.sh
+      - name: Python syntax
+        run: |
+          python3 -m py_compile app/main.py scripts/configure_flags.py
+      - name: ShellCheck errors
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq shellcheck
+          shellcheck -S error install.sh update.sh uninstall.sh doctor.sh templo scripts/*.sh
+      - name: JavaScript syntax
+        run: node --check app/static/panel.js
+      - name: Repository safety guard
+        run: |
+          test ! -f data/panel.db
+          if git ls-files | grep -E '(^|/)(runtime|\.venv)/|\.apk$|\.xapk$|(^|/)(cookies|identity)$|panel\.db$'; then
+            echo 'Forbidden runtime/account file is tracked.' >&2
+            exit 1
+          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          bad=[]
+          for p in Path('.').rglob('*'):
+              if p.is_file() and '.git' not in p.parts and p.stat().st_size > 10*1024*1024:
+                  bad.append((str(p),p.stat().st_size))
+          if bad:
+              raise SystemExit(f'Unexpected files >10 MiB: {bad}')
+          PY
+      - name: Installer files present
+        run: |
+          test -x install.sh || chmod +x install.sh
+          test -f requirements.txt
+          test -f packaging/systemd/templo-panel.service.in
+          test -f packaging/systemd/templo-rb@.service.in

@@ -1,0 +1,16 @@
+[Unit]
+Description=Templo Roblox Cordial supervisor rb%i
+After=network-online.target templo-panel.service
+Wants=network-online.target templo-panel.service
+
+[Service]
+Type=simple
+EnvironmentFile=%h/.config/templo-roblox-panel/env
+ExecStart=__INSTALL_DIR__/scripts/cordial_supervisor.sh %i
+Restart=always
+RestartSec=5
+TimeoutStopSec=20
+Nice=10
+
+[Install]
+WantedBy=default.target

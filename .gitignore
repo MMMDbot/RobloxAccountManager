@@ -1,56 +1,34 @@
-# Python cache and bytecode
+# Python
+.venv/
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-.Python
+.pytest_cache/
 
-# Virtual environments
-env/
-venv/
-ENV/
-.venv/
+# Runtime and local database
+runtime/
+data/*
+!data/.gitkeep
+*.pid
+*.log
 
-# PyInstaller build artifacts
-build/
-dist/
-*.spec
-*.spec.log
+# Local configuration and secrets
+.env
+*.env
+!config.example.env
+cookies
+identity
+*.ROBLOSECURITY*
 
-# Account data (SENSITIVE - DO NOT COMMIT!)
-saved_accounts.json
-AccountManagerData/
+# Roblox / Cordial binaries
+*.apk
+*.xapk
+*.AppImage
+vendor/
 
-# IDE and editor files
+# Backups / editor
+*.bak
+*.bak_*
+*~
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
-
-# OS files
 .DS_Store
-Thumbs.db
-desktop.ini
-
-# Logs and temporary files
-*.log
-*.tmp
-temp/
-tmp/
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-debug/
-
-# My things
-handle64.exe
-CLAUDE.md
-website/
-.claude/
-AGENTS.md
-.agents/
-tests/
-PLAN.md

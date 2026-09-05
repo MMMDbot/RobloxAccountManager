@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ENVFILE="${TEMPLE_ENV_FILE:-$HOME/.config/templo-roblox-panel/env}"
+[[ -r "$ENVFILE" ]] && { set -a; source "$ENVFILE"; set +a; }
+BASE="${TEMPLE_BASE:-/opt/templo-roblox-panel}"
+PORT="${TEMPLE_PANEL_PORT:-8090}"
+cmd="${1:-status}"; arg="${2:-}"
+valid_id(){ [[ "$1" =~ ^[1-4]$ ]]; }
+case "$cmd" in
+  status)
+    curl -fsS "http://127.0.0.1:$PORT/health" | jq . ;;
+  start)
+    valid_id "$arg" || { echo 'uso: templo start 1..4' >&2; exit 2; }
+    "$BASE/scripts/cordial_session.sh" "$arg" start | jq . ;;
+  stop)
+    valid_id "$arg" || { echo 'uso: templo stop 1..4' >&2; exit 2; }
+    "$BASE/scripts/cordial_session.sh" "$arg" stop | jq . ;;
+  restart)
+    valid_id "$arg" || { echo 'uso: templo restart 1..4' >&2; exit 2; }
+    "$BASE/scripts/cordial_session.sh" "$arg" stop >/dev/null || true
+    sleep 1; "$BASE/scripts/cordial_session.sh" "$arg" start | jq . ;;
+  setup)
+    "$BASE/scripts/cordial_setup.sh" start | jq .
+    echo "Abre: http://$(hostname -I | awk '{print $1}'):${TEMPLE_SETUP_WEB_PORT:-6090}/vnc.html?autoconnect=1&resize=scale" ;;
+  setup-stop) "$BASE/scripts/cordial_setup.sh" stop | jq . ;;
+  doctor) exec "$BASE/doctor.sh" ;;
+  logs)
+    valid_id "$arg" || { echo 'uso: templo logs 1..4' >&2; exit 2; }
+    tail -n 120 -f "$BASE/runtime/cordial/rb$arg/cordial.log" ;;
+  panel-logs) journalctl --user -u templo-panel.service -n 120 -f ;;
+  update) exec "$BASE/update.sh" ;;
+  *)
+    cat <<'EOF'
+Templo Roblox Panel
+  templo status
+  templo start|stop|restart 1..4
+  templo setup | setup-stop
+  templo doctor
+  templo logs 1..4 | panel-logs
+  templo update
+EOF
+    exit 2 ;;
+esac

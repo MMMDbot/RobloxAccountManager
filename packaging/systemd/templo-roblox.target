@@ -1,0 +1,7 @@
+[Unit]
+Description=Templo Roblox four-client stack
+Wants=templo-panel.service templo-rb@1.service templo-rb@2.service templo-rb@3.service templo-rb@4.service
+After=templo-panel.service
+
+[Install]
+WantedBy=default.target

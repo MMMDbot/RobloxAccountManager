@@ -1,0 +1,16 @@
+[Unit]
+Description=Templo Roblox FastAPI Panel
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=__INSTALL_DIR__
+EnvironmentFile=%h/.config/templo-roblox-panel/env
+ExecStart=__INSTALL_DIR__/.venv/bin/python3 -m uvicorn app.main:app --host ${TEMPLE_PANEL_HOST} --port ${TEMPLE_PANEL_PORT}
+Restart=always
+RestartSec=3
+TimeoutStopSec=15
+
+[Install]
+WantedBy=default.target
