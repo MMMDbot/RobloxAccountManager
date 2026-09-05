@@ -12,7 +12,7 @@ command_ok(){ command -v "$1" >/dev/null 2>&1 && ok "$1 instalado" || fail "$1 n
 echo 'Templo Roblox Panel · diagnóstico'
 [[ "$(uname -m)" == x86_64 ]] && ok 'Arquitectura x86_64' || fail "Arquitectura no soportada: $(uname -m)"
 if [[ -r /etc/os-release ]]; then . /etc/os-release; [[ "${ID:-}" == ubuntu && "${VERSION_ID:-}" == 24.04* ]] && ok "$PRETTY_NAME" || warn "SO no validado: ${PRETTY_NAME:-desconocido}"; fi
-for c in python3 flatpak Xvfb cage x11vnc websockify curl jq; do command_ok "$c"; done
+for c in python3 flatpak Xvfb cage x11vnc websockify curl jq xdotool xclip; do command_ok "$c"; done
 [[ -d "$BASE/app" && -x "$BASE/scripts/cordial_session.sh" ]] && ok "Instalación: $BASE" || fail "Instalación incompleta: $BASE"
 flatpak info io.github.luohoa97.Cordial >/dev/null 2>&1 && ok 'Cordial Flatpak instalado' || fail 'Cordial Flatpak no instalado'
 ENG="${CORDIAL_ENGINE_DIR:-$HOME/.var/app/io.github.luohoa97.Cordial/data/cordial/engine}"

@@ -30,8 +30,8 @@ run_user(){ if [[ "$(id -un)" == "$RUN_USER" ]]; then env HOME="$USER_HOME" "$@"
 user_systemctl(){ run_user env XDG_RUNTIME_DIR="/run/user/$USER_UID" DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$USER_UID/bus" systemctl --user "$@"; }
 echo "[1/8] Dependencias del sistema"
 "${SUDO[@]}" apt-get update
-"${SUDO[@]}" env DEBIAN_FRONTEND=noninteractive apt-get install -y python3 python3-venv python3-pip flatpak xvfb x11vnc novnc websockify cage curl jq ca-certificates git rsync x11-utils xdotool dbus-x11
-for c in python3 flatpak Xvfb cage x11vnc websockify curl jq rsync; do command -v "$c" >/dev/null || { echo "Falta $c después de apt." >&2; exit 5; }; done
+"${SUDO[@]}" env DEBIAN_FRONTEND=noninteractive apt-get install -y python3 python3-venv python3-pip flatpak xvfb x11vnc novnc websockify cage curl jq ca-certificates git rsync x11-utils xdotool xclip dbus-x11
+for c in python3 flatpak Xvfb cage x11vnc websockify curl jq rsync xdotool xclip; do command -v "$c" >/dev/null || { echo "Falta $c después de apt." >&2; exit 5; }; done
 echo "[2/8] Instalando archivos en $INSTALL_DIR"
 "${SUDO[@]}" mkdir -p "$INSTALL_DIR"; "${SUDO[@]}" chown "$USER_UID:$USER_GID" "$INSTALL_DIR"
 user_systemctl stop templo-roblox.target templo-rb@1.service templo-rb@2.service templo-rb@3.service templo-rb@4.service templo-panel.service 2>/dev/null || true
